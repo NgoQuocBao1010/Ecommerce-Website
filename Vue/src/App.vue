@@ -44,6 +44,7 @@ export default {
         },
     },
     created() {
+        // localStorage.clear();
         this.showNav =
             (this.showNav.name === "Login") | (this.showNav.name === "Register")
                 ? (this.showNav = false)

@@ -3,7 +3,7 @@
         <img
             :src="shoe.thumbnail"
             alt="shoe.name"
-            style="width: 100%"
+            style="width: 100%; aspect-ratio: 1/1;"
             ref="thumbnail"
         />
         <div class="info">
@@ -42,7 +42,6 @@ export default {
             // console.log("Move right");
         },
     },
-    mounted() {},
 };
 </script>
 

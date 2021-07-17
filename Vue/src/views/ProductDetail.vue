@@ -1,6 +1,6 @@
 <template>
     <div class="card-wrapper">
-        <div class="card">
+        <div class="card" v-if="exist">
             <!-- card left -->
             <div class="product-imgs">
                 <div class="img-display">
@@ -164,10 +164,12 @@
                 </div>
             </div>
         </div>
+        <h1 v-else>Product does not exist</h1>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 import { mapMutations } from "vuex";
 
 import { createToast } from "mosha-vue-toastify";
@@ -179,9 +181,10 @@ export default {
     },
     data() {
         return {
+            exist: true,
             product: {},
-            sizes: [34, 35, 36],
-            colors: ["black", "white", "orange"],
+            sizes: [],
+            colors: [],
 
             // Size and color validation
             chosenSize: null,
@@ -202,16 +205,40 @@ export default {
     },
     methods: {
         ...mapMutations(["cartUpdate"]),
+        getShoeDetail() {
+            // http://127.0.0.1:8000/shoe-detail/16
+            axios
+                .get(`http://127.0.0.1:8000/shoe-detail/${this.id}`)
+                .then((response) => {
+                    this.product = response.data;
+                    console.log(response.data);
+
+                    this.product.items.forEach((item) => {
+                        this.colors = [...this.colors, item.itemColor];
+                        this.sizes = [...this.sizes, ...item.itemSizes];
+                    });
+
+                    this.colors = [...new Set(this.colors)];
+                    this.sizes = [...new Set(this.sizes)];
+
+                    this.exist = true;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    if (error.response.status === 404) this.exist = false;
+                });
+        },
+
         addToCart() {
             this.emptySize = !this.chosenSize ? true : false;
             this.emptyColor = !this.chosenColor ? true : false;
 
             if (this.emptySize || this.emptyColor) return;
 
-            const itemId = `${this.product.id}-${this.chosenSize}-${this.chosenColor}`;
+            const itemId = `${this.id}-${this.chosenSize}-${this.chosenColor}`;
             const item = {
                 id: itemId,
-                productId: this.product.id,
+                productId: this.id,
                 name: this.product.name,
                 size: this.chosenSize,
                 color: this.chosenColor,
@@ -232,7 +259,7 @@ export default {
         },
     },
     mounted() {
-        this.product = this.$store.getters.getShoeByID(parseInt(this.id));
+        this.getShoeDetail();
     },
 };
 </script>

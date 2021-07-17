@@ -20,8 +20,9 @@ class Shoe(models.Model):
     name = models.CharField(max_length=100)
     brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True, null=True)
+    price = models.PositiveIntegerField(default=0)
     dateAdded = models.DateTimeField(auto_now_add=True)
-    thumbnail = models.ImageField(upload_to="shoe-thumbnail/", default="shoe-thumbnail/default.png")
+    thumbnail = models.ImageField(upload_to="shoe-thumbnail/", default=None, null=True, blank=True)
 
     # Manipulate (in this case, resizing image before saving)
     def makeThumbnail(self, size=(300, 300)):
@@ -74,14 +75,12 @@ class Size(models.Model):
 
 class ShoeItem(models.Model):
     class Meta:
-        unique_together = ['shoe', 'color', 'size']
+        unique_together = ['shoe', 'color']
     
     shoe = models.ForeignKey(Shoe, on_delete=models.CASCADE)
     color = models.ForeignKey(Color, null=True, on_delete=models.SET_NULL)
-    size = models.ForeignKey(Size, null=True, on_delete=models.SET_NULL)
-    price = models.IntegerField()
+    size = models.ManyToManyField(Size)
     quantity = models.PositiveIntegerField(default=0)
-    picture = models.ImageField(null=True, blank=True, upload_to="shoes/")
 
     def __str__(self):
-        return f"{self.shoe}, color {self.color}, size {self.size} has {self.quantity} left"
+        return f"{self.shoe}, color {self.color} has {self.quantity} left"

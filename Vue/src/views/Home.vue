@@ -2,15 +2,16 @@
     <section>
         <!-- Addidas -->
         <h2 class="title">Adidas</h2>
-        <CardCaurosel :shoes="addidasBrands" />
+        <CardCaurosel brandName="adidas" />
 
         <!-- Nike -->
-        <h2 class="title">Converse</h2>
-        <CardCaurosel :shoes="converseBrands" />
+        <h2 class="title">Nike</h2>
+        <CardCaurosel brandName="nike" />
     </section>
 </template>
 
 <script>
+import axios from "axios";
 import { mapState } from "vuex";
 
 import Welcome from "../components/Welcome.vue";
@@ -25,19 +26,23 @@ export default {
         CardCaurosel,
     },
     data() {
-        return {};
+        return {
+            nikeShoes: [],
+            adidasShoes: [],
+        };
     },
-    computed: {
-        ...mapState(["shoes"]),
-        addidasBrands() {
-            return this.shoes.filter((item) => {
-                return item.brand === "Adidas";
-            });
-        },
-        converseBrands() {
-            return this.shoes.filter((item) => {
-                return item.brand === "Converse";
-            });
+    methods: {
+        getShoesByBrand(brand) {
+            let data = [];
+            axios
+                .get(`http://127.0.0.1:8000/shoes/${brand}`)
+                .then((response) => {
+                    console.log(response.data);
+                    data = response.data;
+                })
+                .catch((error) => console.log(error));
+
+            return data;
         },
     },
 };

@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapMutations } from "vuex";
 
 export default {
@@ -29,7 +30,7 @@ export default {
     },
     data() {
         return {
-            shoe: null,
+            shoe: {},
             quantity: null,
         };
     },
@@ -59,11 +60,27 @@ export default {
                 this.removeItemInCart(this.item.id);
             }
         },
+        getShoeDetail() {
+            // http://127.0.0.1:8000/shoe-detail/16
+            axios
+                .get(`http://127.0.0.1:8000/shoe-detail/${this.item.productId}`)
+                .then((response) => {
+                    this.shoe = response.data;
+                    console.log(response.data);
+
+                    this.exist = true;
+                })
+                .catch((error) => {
+                    console.log(error);
+                    if (error.response.status === 404) this.exist = false;
+                });
+        },
     },
-    created() {
+    mounted() {
+        this.getShoeDetail();
         const shoeId = this.item.productId;
         this.quantity = this.item.quantity;
-        this.shoe = this.$store.getters.getShoeByID(shoeId);
+        // this.shoe = this.$store.getters.getShoeByID(shoeId);
     },
 };
 </script>
@@ -111,7 +128,7 @@ export default {
         gap: 20px;
 
         input {
-            width: 40%;
+            width: 25%;
             text-align: center;
         }
     }

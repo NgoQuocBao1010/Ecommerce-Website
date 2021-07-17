@@ -50,10 +50,8 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapState } from "vuex";
-import Multiselect from "vue-multiselect";
-
-import "vue-multiselect/dist/vue-multiselect.min.css";
 
 import Card from "../components/Card.vue";
 
@@ -61,10 +59,10 @@ export default {
     name: "Product",
     components: {
         Card,
-        Multiselect,
     },
     data() {
         return {
+            shoes: [],
             brand: "",
             feature: "",
             sort: "",
@@ -72,17 +70,18 @@ export default {
             options: [{ country: "Canada", code: "CA" }],
         };
     },
-    computed: {
-        ...mapState(["shoes"]),
-    },
     methods: {
-        filterUpdate(data) {
-            console.log(data);
+        getAllShoes() {
+            axios
+                .get(`http://127.0.0.1:8000/all-shoes/`)
+                .then((response) => {
+                    this.shoes = response.data;
+                })
+                .catch((error) => console.log(error));
         },
-        removeFilter(index) {
-            // this.filters.splice(index);
-            // console.log(this.filters);
-        },
+    },
+    created() {
+        this.getAllShoes();
     },
 };
 </script>
@@ -190,7 +189,7 @@ select option {
 
 .product-container {
     padding: 2rem;
-    margin: 0 auto;
+    margin: 2rem auto;
     display: flex;
     justify-content: center;
     align-items: center;

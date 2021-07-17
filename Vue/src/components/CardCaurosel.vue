@@ -19,7 +19,7 @@
 
 <script>
 import { mapState } from "vuex";
-// import { VueAgile } from "vue-agile";
+import axios from "axios";
 
 import Card from "./Card.vue";
 
@@ -30,15 +30,18 @@ export default {
     },
     data() {
         return {
+            // carausel attributes
             width: null,
             gap: 0,
             moveLength: 330,
             moveForward: true,
             autoPlay: null,
+
+            shoes: [],
         };
     },
     props: {
-        shoes: Array,
+        brandName: String,
     },
     computed: {
         maxLength() {
@@ -58,7 +61,17 @@ export default {
         },
     },
     methods: {
+        getShoes() {
+            axios
+                .get(`http://127.0.0.1:8000/shoes/${this.brandName}`)
+                .then((response) => {
+                    this.shoes = response.data;
+                })
+                .catch((error) => console.log(error));
+        },
+        // Carausel methods
         forward() {
+            this.width = this.$refs.caurosel.offsetWidth;
             const remainder =
                 (this.maxLength - this.width - this.gap) / this.moveLength;
 
@@ -96,6 +109,9 @@ export default {
             if (this.moveForward) this.forward();
             else this.prev();
         }, 3000);
+    },
+    created() {
+        this.getShoes();
     },
 };
 </script>
@@ -152,7 +168,7 @@ export default {
 }
 
 @media only screen and (min-width: 820px) {
-    .caurosel-wrapper {
+    .wrapper {
         max-width: 90%;
         padding: 1rem 5rem;
     }
@@ -161,9 +177,9 @@ export default {
     }
 }
 
-@media only screen and (min-width: 2000px) {
+@media only screen and (min-width: 1740px) {
     .caurosel-wrapper {
-        max-width: 1700px;
+        max-width: 1500px;
     }
 }
 </style>

@@ -114,13 +114,12 @@ export default {
             let result = 0;
             console.log(this.cart);
             this.cart.forEach((item) => {
-                const itemPrice = this.$store.getters.getShoeByID(
-                    item.productId
-                ).price;
-
-                const price = itemPrice * item.quantity;
-
-                result += price;
+                console.log(item);
+                // const itemPrice = this.$store.getters.getShoeByID(
+                //     item.productId
+                // ).price;
+                // const price = itemPrice * item.quantity;
+                // result += price;
             });
 
             return result;
