@@ -20,10 +20,12 @@
                             spellcheck="false"
                             required
                         />
+                        <p class="error">{{ error }}</p>
                     </div>
                     <div class="input">
                         <label for="password">Password</label>
                         <input type="password" v-model="password" required />
+                        <p class="error">{{ error }}</p>
                     </div>
                 </div>
 
@@ -42,7 +44,8 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import axios from "axios";
+import { mapActions } from "vuex";
 import { createToast } from "mosha-vue-toastify";
 
 export default {
@@ -51,23 +54,44 @@ export default {
         return {
             email: "",
             password: "",
+            error: "",
         };
     },
     methods: {
-        ...mapMutations(["authenticate"]),
+        ...mapActions(["logginIn"]),
         login() {
-            this.authenticate(this.email, this.password);
+            const loginForm = {
+                email: this.email,
+                password: this.password,
+            };
 
-            this.$router.push({ name: "Home" });
+            axios
+                .post("http://127.0.0.1:8000/api/login", loginForm)
+                .then((response) => {
+                    const token = response.data["auth_token"];
+                    this.logginIn(token);
+                    this.$router.push({ name: "Home" });
 
-            createToast(`Welcome, ${this.email}`, {
-                type: "success",
-                timeout: 3000,
-                position: "bottom-right",
-                transition: "bounce",
-                hideProgressBar: true,
-                showIcon: true,
-            });
+                    createToast(`Welcome, ${this.email}`, {
+                        type: "success",
+                        timeout: 3000,
+                        position: "bottom-right",
+                        transition: "bounce",
+                        hideProgressBar: true,
+                        showIcon: true,
+                    });
+
+                    this.email = "";
+                    this.password = "";
+                    this.error = "";
+                })
+                .catch((err) => {
+                    console.log(err);
+                    if (err.response.status === 401) {
+                        console.log(err.response.data.message);
+                        this.error = err.response.data.message;
+                    }
+                });
         },
     },
 };
@@ -153,6 +177,11 @@ export default {
                         padding: 5px 20px;
                         font-size: 1.8rem;
                         border-radius: 5px;
+                    }
+
+                    .error {
+                        color: red;
+                        font-size: 1.2rem;
                     }
                 }
             }

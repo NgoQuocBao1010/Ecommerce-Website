@@ -64,7 +64,6 @@
                             spellcheck="false"
                             type="email"
                             name="email"
-                            :class="{ active: !nonEdit }"
                             v-model="email"
                             readonly
                         />
@@ -146,11 +145,11 @@ export default {
     data() {
         return {
             nonEdit: true,
-            fullName: "John Cena",
+            fullName: "",
             gender: "",
-            email: "ucantseeme@gmail.com",
-            phone: "0939983979",
-            address: "B19, KDC Hung Phu 1, Can Tho",
+            email: "",
+            phone: "",
+            address: "",
             dateOfBirth: "",
         };
     },
@@ -160,6 +159,19 @@ export default {
     watch: {
         nonEdit(newVal) {
             if (!newVal) this.$refs.firstEdit.focus();
+        },
+        user(newVal, oldVal) {
+            console.log("Change", newVal, oldVal);
+            if (newVal) {
+                ({
+                    email: this.email,
+                    fullName: this.fullName,
+                    gender: this.gender,
+                    phone: this.phone,
+                    address: this.address,
+                    dateOfBirth: this.dateOfBirth,
+                } = this.user);
+            }
         },
     },
     methods: {
@@ -181,6 +193,18 @@ export default {
 
             console.log(data);
         },
+    },
+    mounted() {
+        if (this.user) {
+            ({
+                email: this.email,
+                fullName: this.fullName,
+                gender: this.gender,
+                phone: this.phone,
+                address: this.address,
+                dateOfBirth: this.dateOfBirth,
+            } = this.user);
+        }
     },
 };
 </script>

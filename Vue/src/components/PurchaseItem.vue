@@ -1,9 +1,9 @@
 <template>
     <div class="card-wrapper">
-        <img :src="shoe.thumbnail" :alt="shoe.name" />
+        <img :src="item.thumbnail" :alt="item.name" />
         <i class="fas fa-trash" @click="removeItem"></i>
         <div class="info">
-            <h3 class="title">{{ shoe.name }}</h3>
+            <h3 class="title">{{ item.name }}</h3>
             <p>Color: {{ item.color }}</p>
             <p>Size: {{ item.size }}</p>
             <div class="quantity">
@@ -13,7 +13,7 @@
                     v-model="quantity"
                     min="1"
                 />
-                <p>{{ price }}.000 VND</p>
+                <p>{{ $filters.formatMoneyToVND(price) }}.000 VND</p>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@ export default {
     },
     computed: {
         price() {
-            const originalPrice = this.shoe.price;
+            const originalPrice = this.item.price;
 
             return originalPrice * this.quantity;
         },
@@ -60,27 +60,9 @@ export default {
                 this.removeItemInCart(this.item.id);
             }
         },
-        getShoeDetail() {
-            // http://127.0.0.1:8000/shoe-detail/16
-            axios
-                .get(`http://127.0.0.1:8000/shoe-detail/${this.item.productId}`)
-                .then((response) => {
-                    this.shoe = response.data;
-                    console.log(response.data);
-
-                    this.exist = true;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    if (error.response.status === 404) this.exist = false;
-                });
-        },
     },
     mounted() {
-        this.getShoeDetail();
-        const shoeId = this.item.productId;
         this.quantity = this.item.quantity;
-        // this.shoe = this.$store.getters.getShoeByID(shoeId);
     },
 };
 </script>

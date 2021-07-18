@@ -19,14 +19,15 @@
             </ul>
 
             <div class="search-bar" v-show="!mobile">
-                <form onsubmit="event.preventDefault();" role="search">
+                <form @submit.prevent="searchForProduct" role="search">
                     <label for="search">Search for stuff</label>
                     <input
                         id="search"
                         type="search"
-                        placeholder="Search..."
+                        placeholder="Enter product name ..."
                         autofocus
                         required
+                        v-model="productName"
                     />
                     <button type="submit">Go</button>
                 </form>
@@ -95,6 +96,8 @@ export default {
             mobile: true,
             mobileNav: null,
             windowWidth: null,
+
+            productName: "",
         };
     },
     computed: {
@@ -114,9 +117,6 @@ export default {
         toggleMobileNav() {
             this.mobileNav = !this.mobileNav;
         },
-        goToCart() {
-            this.$router.push({ name: "Purchase" });
-        },
         checkScreen() {
             this.windowWidth = window.innerWidth;
 
@@ -128,6 +128,17 @@ export default {
             this.mobile = false;
             this.mobileNav = false;
             return;
+        },
+        goToCart() {
+            this.$router.push({ name: "Purchase" });
+        },
+        searchForProduct() {
+            const data = {
+                productName: this.productName,
+            };
+
+            this.productName = "";
+            this.$router.push({ name: "Product", query: data });
         },
     },
     created() {

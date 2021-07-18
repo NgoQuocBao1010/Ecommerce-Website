@@ -15,14 +15,7 @@ class ShoeItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ShoeItem
-        exclude = ('color', 'size')
-    
-
-    # def get_thumbnail(self, obj):
-    #     request = self.context.get('request')
-    #     thumbnailUrl = obj.shoe.thumbnail.url
-    #     return request.build_absolute_uri(thumbnailUrl)
-    
+        exclude = ('color', 'size') 
     
     def get_itemColor(self, obj):
         return obj.color.name

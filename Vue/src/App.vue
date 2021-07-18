@@ -5,7 +5,14 @@
         <Welcome v-show="$route.name === 'Home'" />
         <div class="container">
             <router-view v-slot="{ Component }">
-                <transition name="fade" mode="out-in">
+                <transition
+                    :name="
+                        $route.name === 'Login' || $route.name === 'Register'
+                            ? ''
+                            : 'fade'
+                    "
+                    mode="out-in"
+                >
                     <component :is="Component" />
                 </transition>
             </router-view>
@@ -51,11 +58,16 @@ export default {
                 : (this.showNav = true);
 
         const cart = JSON.parse(localStorage.getItem("cart"));
+        const token = localStorage.getItem("authToken");
 
         if (cart) {
             cart.forEach((order) => {
                 this.$store.commit("cartUpdate", order);
             });
+        }
+
+        if (token) {
+            this.$store.dispatch("logginIn", token);
         }
     },
 };

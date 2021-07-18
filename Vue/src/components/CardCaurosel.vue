@@ -63,7 +63,7 @@ export default {
     methods: {
         getShoes() {
             axios
-                .get(`http://127.0.0.1:8000/shoes/${this.brandName}`)
+                .get(`http://127.0.0.1:8000/all-shoes/?brand=${this.brandName}`)
                 .then((response) => {
                     this.shoes = response.data;
                 })

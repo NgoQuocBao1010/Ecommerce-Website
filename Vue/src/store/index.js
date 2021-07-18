@@ -1,84 +1,12 @@
 import { createStore } from "vuex";
 
+import axios from "axios";
+
 export default createStore({
     state: {
         user: null,
-        authenticated: true,
-        shoes: [
-            {
-                id: 1,
-                name: "Adizero Boston 10",
-                brand: "Adidas",
-                price: 200,
-                thumbnail: require("../assets/shoes/shoes-1.jpg"),
-                dateAdded: new Date("July 08, 2021 12:00:00"),
-            },
-            {
-                id: 2,
-                name: "Futurecraft 3D shoes",
-                brand: "Adidas",
-                price: 800,
-                thumbnail: require("../assets/shoes/shoes-2.jpg"),
-                dateAdded: new Date("July 07, 2021 12:00:00"),
-            },
-            {
-                id: 3,
-                name: "ZK 2K Boost 2.0",
-                brand: "Adidas",
-                price: 400,
-                thumbnail: require("../assets/shoes/shoes-3.jpg"),
-                dateAdded: new Date("May 09, 2021 12:00:00"),
-            },
-            {
-                id: 4,
-                name: "Male Multi Court Tennis",
-                brand: "Adidas",
-                price: 500,
-                thumbnail: require("../assets/shoes/shoes-4.jpg"),
-                dateAdded: new Date("July 05, 2021 12:00:00"),
-            },
-            {
-                id: 5,
-                name: "Converse Classic",
-                brand: "Converse",
-                price: 500,
-                thumbnail: require("../assets/shoes/converse-1.jpg"),
-                dateAdded: new Date("July 09, 2019 12:00:00"),
-            },
-            {
-                id: 6,
-                name: "Converse 70s",
-                brand: "Converse",
-                price: 200,
-                thumbnail: require("../assets/shoes/converse-2.jpg"),
-                dateAdded: new Date("December 09, 2020 12:00:00"),
-            },
-            {
-                id: 7,
-                name: "Fear of Gods",
-                brand: "Converse",
-                price: 1500,
-                thumbnail: require("../assets/shoes/converse-3.jpg"),
-                dateAdded: new Date("November 01, 2020 12:00:00"),
-            },
-            {
-                id: 8,
-                name: "Chuck Taylor",
-                brand: "Converse",
-                price: 2500,
-                thumbnail: require("../assets/shoes/converse-4.jpg"),
-                dateAdded: new Date("June 09, 2021 12:00:00"),
-            },
-            {
-                id: 9,
-                name: "One star",
-                brand: "Converse",
-                price: 100,
-                thumbnail: require("../assets/shoes/converse-5.jpg"),
-                dateAdded: new Date("July 08, 2021 03:00:00"),
-            },
-        ],
-        productDropdown: "",
+        token: null,
+        authenticated: false,
         cart: [],
         orders: [
             {
@@ -129,19 +57,23 @@ export default createStore({
         ],
     },
     mutations: {
-        authenticate(state, loginInfo) {
-            const { username, password } = loginInfo;
-            console.log(`Logging in ${username}, ${password}`);
-
-            state.user = loginInfo;
+        authenticate(state, token) {
+            state.token = token;
             state.authenticated = true;
+            axios.defaults.headers.common["Authorization"] = `Token ${token}`;
+            localStorage.setItem("authToken", token);
+
+            console.log("Authenticated!!!!!");
+        },
+        getUserProfile(state, profile) {
+            state.user = profile;
         },
         logout(state) {
             state.user = null;
+            state.token = null;
             state.authenticated = false;
-        },
-        dropdownToggle(state, status) {
-            state.productDropdown = status;
+            axios.defaults.headers.common["Authorization"] = "";
+            localStorage.setItem("authToken", "");
         },
         cartUpdate(state, newItem) {
             const existItem = state.cart.find((item) => item.id === newItem.id);
@@ -168,9 +100,6 @@ export default createStore({
         },
     },
     getters: {
-        getShoeByID: (state) => (id) => {
-            return state.shoes.find((song) => song.id === id);
-        },
         getCartLength: (state) => {
             let numOfItems = 0;
             state.cart.forEach((order) => {
@@ -180,6 +109,22 @@ export default createStore({
             return numOfItems;
         },
     },
-    actions: {},
+    actions: {
+        logginIn(context, token) {
+            context.commit("authenticate", token);
+
+            axios
+                .get("http://127.0.0.1:8000/api/profile")
+                .then((response) => {
+                    context.commit("getUserProfile", response.data);
+                })
+                .catch((error) => {
+                    if (error.response.status === 401)
+                        console.log(
+                            "You are not allowed to view this information"
+                        );
+                });
+        },
+    },
     modules: {},
 });

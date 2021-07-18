@@ -211,7 +211,6 @@ export default {
                 .get(`http://127.0.0.1:8000/shoe-detail/${this.id}`)
                 .then((response) => {
                     this.product = response.data;
-                    console.log(response.data);
 
                     this.product.items.forEach((item) => {
                         this.colors = [...this.colors, item.itemColor];
@@ -242,6 +241,8 @@ export default {
                 name: this.product.name,
                 size: this.chosenSize,
                 color: this.chosenColor,
+                thumbnail: this.product.thumbnail,
+                price: this.product.price,
                 quantity: parseInt(this.quantity),
             };
 

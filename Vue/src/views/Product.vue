@@ -22,13 +22,17 @@
                     <option value="a-z">Letters: A to Z</option>
                     <option value="z-a">Letters: Z to A</option>
                     <option value="hight2low">Price: Highest to Lowest</option>
-                    <option value="low2high">Price: Z to A</option>
+                    <option value="low2high">Price: Lowest to Highest</option>
                 </select>
             </div>
         </div>
-        <div class="tags" v-show="brand || feature || sort">
+        <div class="tags" v-show="productName || brand || feature || sort">
             <h1>
                 You are looking for
+                <span v-show="productName">
+                    {{ productName }}
+                    <i class="fas fa-times" @click="productName = ''"></i>
+                </span>
                 <span v-show="brand">
                     {{ brand }}
                     <i class="fas fa-times" @click="brand = ''"></i>
@@ -66,21 +70,71 @@ export default {
             brand: "",
             feature: "",
             sort: "",
+            productName: "",
             value: "",
-            options: [{ country: "Canada", code: "CA" }],
         };
+    },
+    watch: {
+        productName() {
+            this.updateQueryString();
+        },
+        brand() {
+            this.updateQueryString();
+        },
+        feature() {
+            this.updateQueryString();
+        },
+        sort() {
+            this.updateQueryString();
+        },
+        $route(to, from) {
+            if (to.name === "Product") {
+                this.productName = this.$route.query.productName || "";
+                this.getAllShoes();
+            }
+        },
     },
     methods: {
         getAllShoes() {
+            this.brand = this.brand || "";
+            this.feature = this.feature || "";
+            this.sort = this.sort || "";
+
+            const url = `http://127.0.0.1:8000/all-shoes/?productName=${this.productName}&brand=${this.brand}&feature=${this.feature}&sort=${this.sort}`;
+
             axios
-                .get(`http://127.0.0.1:8000/all-shoes/`)
+                .get(url)
                 .then((response) => {
                     this.shoes = response.data;
                 })
                 .catch((error) => console.log(error));
         },
+        updateQueryString() {
+            const data = {
+                productName: this.productName,
+                brand: this.brand,
+                feature: this.feature,
+                sort: this.sort,
+            };
+            this.$router.push({
+                query: data,
+            });
+        },
     },
     created() {
+        const queryString = this.$route.query;
+
+        if (
+            !(Object.keys(queryString).length === 0) ||
+            !(queryString.constructor === Object)
+        ) {
+            ({
+                productName: this.productName,
+                brand: this.brand,
+                feature: this.feature,
+                sort: this.sort,
+            } = this.$route.query);
+        }
         this.getAllShoes();
     },
 };

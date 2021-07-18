@@ -67,19 +67,23 @@
                 <div class="price-couting">
                     <div class="field">
                         <h3>Original Price</h3>
-                        <span>{{ totalPrice }}.000 VND</span>
+                        <span>
+                            {{ $filters.formatMoneyToVND(totalPrice) }}.000 VND
+                        </span>
                     </div>
                     <div class="field">
                         <h3>Coupon</h3>
-                        <span>{{ couponCode }}</span>
+                        <span>0</span>
                     </div>
                     <div class="field">
                         <h3>Other Sales</h3>
-                        <span>...</span>
+                        <span>0</span>
                     </div>
                     <div class="field total">
                         <h3>Total Price</h3>
-                        <span>{{ totalPrice }}.000 VND</span>
+                        <span>
+                            {{ $filters.formatMoneyToVND(totalPrice) }}.000 VND
+                        </span>
                     </div>
                 </div>
             </div>
@@ -105,21 +109,15 @@ export default {
             address: "",
             note: "",
             couponCode: "",
-            // totalPrice: 0,
         };
     },
     computed: {
         ...mapState(["cart"]),
         totalPrice() {
             let result = 0;
-            console.log(this.cart);
             this.cart.forEach((item) => {
-                console.log(item);
-                // const itemPrice = this.$store.getters.getShoeByID(
-                //     item.productId
-                // ).price;
-                // const price = itemPrice * item.quantity;
-                // result += price;
+                const price = item.price * item.quantity;
+                result += price;
             });
 
             return result;
@@ -139,7 +137,6 @@ export default {
                 });
                 return;
             }
-            // const cartToJson = JSON.stringify(this.cart);
 
             const purchaseInfo = {
                 name: this.name,
@@ -151,7 +148,7 @@ export default {
             };
 
             this.clearCart();
-            console.log(purchaseInfo);
+            console.log(`Purchase successfully ${purchaseInfo}`);
             this.$router.push({ name: "Home" });
 
             createToast("Purchase Successful!", {

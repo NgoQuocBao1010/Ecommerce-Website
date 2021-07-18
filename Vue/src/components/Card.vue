@@ -8,7 +8,9 @@
         />
         <div class="info">
             <h1>{{ shoe.name }}</h1>
-            <p class="price">{{ shoe.price }}.000 VND</p>
+            <p class="price">
+                {{ $filters.formatMoneyToVND(shoe.price) }}.000 VND
+            </p>
             <p>
                 <router-link
                     :to="{ name: 'ProductDetail', params: { id: shoe.id } }"
@@ -50,7 +52,7 @@ export default {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     max-width: 300px;
     min-width: 300px;
-    height: 420px;
+    height: 450px;
     margin-bottom: 20px;
 
     display: flex;
@@ -79,20 +81,8 @@ export default {
 .price {
     color: grey;
     font-size: 16px;
+    margin: 0.5rem 0;
 }
-
-/* button {
-    border: none;
-    outline: 0;
-    padding: 12px;
-    background-color: black;
-    text-align: center;
-    cursor: pointer;
-    width: 100%;
-    font-size: 18px;
-
-    transition: all 0.3s ease;
-} */
 
 a {
     display: block;

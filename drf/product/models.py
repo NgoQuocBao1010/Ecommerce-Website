@@ -17,6 +17,10 @@ class Brand(models.Model):
 
 
 class Shoe(models.Model):
+    class Meta:
+        ordering = ['-dateAdded']
+
+
     name = models.CharField(max_length=100)
     brand = models.ForeignKey(Brand, null=True, blank=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True, null=True)
