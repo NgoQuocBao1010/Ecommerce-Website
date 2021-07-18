@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from .models import Profile
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, UserRegisSerializer, ProfileSerializer
 
 User = get_user_model()
 
@@ -34,6 +34,21 @@ def loginApi(request):
         return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={'status':'false', 'message': "Invalid email or password"})
 
 
+@api_view(['POST'])
+def register(request):
+    serializer = UserRegisSerializer(data=request.data)
+
+    if serializer.is_valid():
+        user =  serializer.save()
+        print(f"User {user} is created\n")
+    
+    else:
+        print(serializer.errors)
+        return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={'errors': serializer.errors})
+    
+    return JsonResponse(status=status.HTTP_200_OK, data={'message': "User is created"})
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getProfile(request):
@@ -42,6 +57,24 @@ def getProfile(request):
         serializer = ProfileSerializer(profile, many=False, context={"request": request})
 
         return Response(serializer.data)
+    
+    else:
+        return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={'status':'false', 'message': "You are not authorized to view this profile"})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def updateProfile(request):
+    if request.user.is_authenticated:
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print("Error")
+        
+        return JsonResponse(status=status.HTTP_200_OK, data={'status':'false', 'message': "no comment"})
     
     else:
         return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={'status':'false', 'message': "You are not authorized to view this profile"})

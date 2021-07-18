@@ -133,6 +133,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import { mapState, mapMutations } from "vuex";
 
 import OrderCard from "../components/OrderCard.vue";
@@ -180,14 +181,23 @@ export default {
             if (this.nonEdit) this.nonEdit = false;
         },
         saveInfo() {
-            const data = JSON.stringify({
+            const data = {
                 email: this.email,
                 fullName: this.fullName,
                 gender: this.gender,
                 phone: this.phone,
                 address: this.address,
                 dateOfBirth: this.dateOfBirth,
-            });
+            };
+
+            axios
+                .post("http://127.0.0.1:8000/api/update-profile", data)
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
             this.nonEdit = true;
 

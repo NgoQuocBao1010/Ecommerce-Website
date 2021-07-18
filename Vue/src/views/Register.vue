@@ -1,7 +1,7 @@
 <template>
     <div class="register-container">
         <div class="register-wrapper">
-            <form @submit.prevent="">
+            <form @submit.prevent="register">
                 <div class="animated-logo">
                     <!-- <p>Welcome</p> -->
                     <span style="--i: 1">f</span>
@@ -20,14 +20,17 @@
                             spellcheck="false"
                             required
                         />
+                        <p class="errors">{{ error.email }}</p>
                     </div>
                     <div class="input">
                         <label for="password">Password</label>
-                        <input type="password" v-model="password" required />
+                        <input type="password" v-model="password1" required />
+                        <p class="errors">{{ error.password }}</p>
                     </div>
                     <div class="input">
                         <label for="password2">Confirm Password</label>
                         <input type="password" v-model="password2" required />
+                        <p class="errors">{{ error.password }}</p>
                     </div>
                 </div>
 
@@ -43,14 +46,83 @@
 </template>
 
 <script>
+import axios from "axios";
+import { createToast } from "mosha-vue-toastify";
+
 export default {
     name: "Register",
     data() {
         return {
             email: "",
-            password: "",
+            password1: "",
             password2: "",
+            error: {
+                email: "",
+                password: "",
+            },
         };
+    },
+    methods: {
+        validatePassword() {
+            if (this.password1 !== this.password2) {
+                this.error.password =
+                    "Password and confirm password do not match";
+
+                return false;
+            }
+
+            if (this.password1.length < 5) {
+                this.error.password =
+                    "Password needs to be at least 5 letters-long!";
+
+                return false;
+            }
+
+            if (
+                /[a-z]/.test(this.password1) &&
+                /[A-Z]/.test(this.password1) &&
+                /\d/.test(this.password1)
+            ) {
+                this.error.password = "";
+                return true;
+            } else {
+                this.error.password =
+                    "Password needs to contain number, uppercase and lowercase letter";
+
+                return false;
+            }
+        },
+        register() {
+            if (!this.validatePassword()) return;
+
+            const data = {
+                email: this.email,
+                password: this.password1,
+            };
+
+            axios
+                .post("http://127.0.0.1:8000/api/register", data)
+                .then((response) => {
+                    console.log(response);
+                    this.$router.push({ name: "Login" });
+
+                    createToast(`Your account is created`, {
+                        type: "success",
+                        timeout: 3000,
+                        position: "bottom-right",
+                        transition: "bounce",
+                        hideProgressBar: true,
+                        showIcon: true,
+                    });
+                })
+                .catch((error) => {
+                    const data = error.response.data;
+
+                    for (const key in data.errors) {
+                        this.error[key] = data.errors[key][0];
+                    }
+                });
+        },
     },
 };
 </script>
@@ -135,6 +207,11 @@ export default {
                         padding: 5px 20px;
                         font-size: 1.8rem;
                         border-radius: 5px;
+                    }
+
+                    .errors {
+                        color: red;
+                        font-size: 1.2rem;
                     }
                 }
             }

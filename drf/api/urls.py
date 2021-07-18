@@ -5,7 +5,4 @@ urlpatterns = [
     # path('', views.api, name='home'),
     path('all-shoes/', views.shoeList, name='shoeList'),
     path('shoe-detail/<str:id>', views.shoeDetail, name='shoeDetail'),
-    # path('task-update/<str:id>', views.taskUpdate, name='taskUpdate'),
-    # path('task-delete/<str:id>', views.taskDelete, name='taskDelete'),
-    # path('task-create', views.taskCreate, name='taskCreate'),
 ]
