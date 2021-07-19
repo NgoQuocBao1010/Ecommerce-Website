@@ -71,8 +71,8 @@ export default {
 .card-wrapper {
     min-width: 250px;
     max-width: 250px;
-    min-height: 400px;
-    max-height: 400px;
+    min-height: 450px;
+    max-height: 450px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -100,6 +100,10 @@ export default {
     .info {
         margin-top: 1rem;
         width: 90%;
+
+        .title {
+            margin-bottom: 2rem;
+        }
     }
 
     .quantity {

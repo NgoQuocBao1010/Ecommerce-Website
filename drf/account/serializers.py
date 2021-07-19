@@ -45,7 +45,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_email(self, obj):
         return obj.user.email
     
-    def update(self, instance):  
+    def update(self, instance, validated_data):  
         instance.fullName = self.validated_data.get('fullName', instance.fullName)
         instance.phone = self.validated_data.get('phone', instance.phone)
         instance.address = self.validated_data.get('address', instance.address)

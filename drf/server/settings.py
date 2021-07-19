@@ -27,10 +27,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Rest frameworks
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     'djoser',
+
+    # Extensions
+    'django_extensions',
 
     'api.apps.ApiConfig',
     'account.apps.AccountConfig',

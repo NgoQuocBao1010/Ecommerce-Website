@@ -93,6 +93,8 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+
+import axios from "axios";
 import { createToast } from "mosha-vue-toastify";
 
 import PurchaseItem from "../components/PurchaseItem.vue";
@@ -112,7 +114,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(["cart"]),
+        ...mapState(["user", "cart"]),
         totalPrice() {
             let result = 0;
             this.cart.forEach((item) => {
@@ -121,6 +123,17 @@ export default {
             });
 
             return result;
+        },
+    },
+    watch: {
+        user(newVal, oldVal) {
+            if (newVal) {
+                ({
+                    fullName: this.name,
+                    phone: this.phone,
+                    address: this.address,
+                } = this.user);
+            }
         },
     },
     methods: {
@@ -147,19 +160,47 @@ export default {
                 price: this.totalPrice,
             };
 
-            this.clearCart();
-            console.log(`Purchase successfully ${purchaseInfo}`);
-            this.$router.push({ name: "Home" });
+            axios
+                .post("http://127.0.0.1:8000/orders/", purchaseInfo)
+                .then((response) => {
+                    if (response.status === 200) {
+                        this.clearCart();
 
-            createToast("Purchase Successful!", {
-                type: "success",
-                timeout: 3000,
-                position: "bottom-right",
-                transition: "bounce",
-                hideProgressBar: true,
-                showIcon: true,
-            });
+                        this.$router.push({ name: "Home" });
+
+                        createToast("Purchase Successful!", {
+                            type: "success",
+                            timeout: 3000,
+                            position: "bottom-right",
+                            transition: "bounce",
+                            hideProgressBar: true,
+                            showIcon: true,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    createToast(
+                        "There are some problems! Please try again later!",
+                        {
+                            type: "error",
+                            timeout: 3000,
+                            position: "bottom-right",
+                            transition: "bounce",
+                            hideProgressBar: true,
+                            showIcon: true,
+                        }
+                    );
+                });
         },
+    },
+    mounted() {
+        if (this.user) {
+            ({
+                fullName: this.name,
+                phone: this.phone,
+                address: this.address,
+            } = this.user);
+        }
     },
 };
 </script>

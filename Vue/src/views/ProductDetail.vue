@@ -5,52 +5,24 @@
             <div class="product-imgs">
                 <div class="img-display">
                     <div class="img-showcase">
-                        <img :src="product.thumbnail" alt="shoe image" />
                         <img
-                            src="../assets/shoes/shoes-2.jpg"
-                            alt="shoe image"
-                        />
-                        <img
-                            src="../assets/shoes/shoes-3.jpg"
-                            alt="shoe image"
-                        />
-                        <img
-                            src="../assets/shoes/shoes-4.jpg"
+                            :src="product.pictures ? product.pictures[0] : '#'"
                             alt="shoe image"
                         />
                     </div>
                 </div>
-                <div class="img-select">
-                    <div class="img-item">
+                <div
+                    class="img-select"
+                    v-show="product.pictures && product.pictures.length > 1"
+                >
+                    <div
+                        class="img-item"
+                        v-for="(pic, index) in product.pictures"
+                        :key="index"
+                        :src="pic"
+                    >
                         <a href="#" data-id="1">
-                            <img
-                                src="../assets/shoes/shoes-1.jpg"
-                                alt="shoe image"
-                            />
-                        </a>
-                    </div>
-                    <div class="img-item">
-                        <a href="#" data-id="2">
-                            <img
-                                src="../assets/shoes/shoes-2.jpg"
-                                alt="shoe image"
-                            />
-                        </a>
-                    </div>
-                    <div class="img-item">
-                        <a href="#" data-id="3">
-                            <img
-                                src="../assets/shoes/shoes-3.jpg"
-                                alt="shoe image"
-                            />
-                        </a>
-                    </div>
-                    <div class="img-item">
-                        <a href="#" data-id="4">
-                            <img
-                                src="../assets/shoes/shoes-4.jpg"
-                                alt="shoe image"
-                            />
+                            <img :src="pic" alt="shoe image" />
                         </a>
                     </div>
                 </div>
@@ -211,10 +183,11 @@ export default {
                 .get(`http://127.0.0.1:8000/shoe-detail/${this.id}`)
                 .then((response) => {
                     this.product = response.data;
+                    console.log(response.data);
 
                     this.product.items.forEach((item) => {
                         this.colors = [...this.colors, item.itemColor];
-                        this.sizes = [...this.sizes, ...item.itemSizes];
+                        this.sizes = [...this.sizes, item.itemSize];
                     });
 
                     this.colors = [...new Set(this.colors)];
@@ -234,7 +207,12 @@ export default {
 
             if (this.emptySize || this.emptyColor) return;
 
-            const itemId = `${this.id}-${this.chosenSize}-${this.chosenColor}`;
+            const itemId = this.product.items.find(
+                (item) =>
+                    item.itemColor === this.chosenColor &&
+                    item.itemSize === this.chosenSize
+            ).id;
+
             const item = {
                 id: itemId,
                 productId: this.id,
@@ -312,7 +290,7 @@ img {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* height: 80vh; */
+    max-height: 700px;
 }
 
 .product-title {

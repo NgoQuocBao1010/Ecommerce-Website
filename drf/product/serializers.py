@@ -1,6 +1,6 @@
 from django.db.models import Count
 from rest_framework import serializers
-from .models import Shoe, ShoeItem, Color
+from .models import *
 
 class ShoeSerializer(serializers.ModelSerializer):
 
@@ -11,7 +11,7 @@ class ShoeSerializer(serializers.ModelSerializer):
 
 class ShoeItemSerializer(serializers.ModelSerializer):
     itemColor = serializers.SerializerMethodField()
-    itemSizes = serializers.SerializerMethodField()
+    itemSize = serializers.SerializerMethodField()
     
     class Meta:
         model = ShoeItem
@@ -20,10 +20,27 @@ class ShoeItemSerializer(serializers.ModelSerializer):
     def get_itemColor(self, obj):
         return obj.color.name
     
-    def get_itemSizes(self, obj):
-        result = []
-        for size in obj.size.all():
-            result.append(size.value)
-        
-        return result
+    def get_itemSize(self, obj):
+        return obj.size.value
+
+
+class PurchaseItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseItem
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255, required=True)
+    phone = serializers.CharField(max_length=20, required=True)
+    address = serializers.CharField(max_length=255, required=True)
+    price = serializers.IntegerField()
+    cart = serializers.ListField()
+    
+
+    def validate_data(self, data):
+        pass
+    
+    def save(self, user=None, *args, **kwargs):
+        pass
         

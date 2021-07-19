@@ -31,7 +31,7 @@ const routes = [
         component: ProductDetail,
         props: true,
         meta: {
-            title: "Product Detail ",
+            title: "Product Detail",
         },
     },
     {
@@ -39,7 +39,7 @@ const routes = [
         name: "Purchase",
         component: Purchase,
         meta: {
-            title: "Product Page",
+            title: "Purchase",
         },
     },
     {
@@ -82,7 +82,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} || Footco`;
+    document.title = `${to.meta.title} | Footco`;
     next();
 });
 

@@ -162,7 +162,6 @@ export default {
             if (!newVal) this.$refs.firstEdit.focus();
         },
         user(newVal, oldVal) {
-            console.log("Change", newVal, oldVal);
             if (newVal) {
                 ({
                     email: this.email,
@@ -176,7 +175,7 @@ export default {
         },
     },
     methods: {
-        ...mapMutations(["logout"]),
+        ...mapMutations(["logout", "getUserProfile"]),
         toggleEdit() {
             if (this.nonEdit) this.nonEdit = false;
         },
@@ -193,15 +192,13 @@ export default {
             axios
                 .post("http://127.0.0.1:8000/api/update-profile", data)
                 .then((response) => {
-                    console.log(response);
+                    if (response.status === 200) this.getUserProfile(data);
                 })
                 .catch((error) => {
                     console.log(error);
                 });
 
             this.nonEdit = true;
-
-            console.log(data);
         },
     },
     mounted() {

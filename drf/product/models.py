@@ -19,6 +19,9 @@ class Brand(models.Model):
 class Shoe(models.Model):
     class Meta:
         ordering = ['-dateAdded']
+        constraints = [
+            models.UniqueConstraint(fields=["name"], name="shoeName")
+        ]
 
 
     name = models.CharField(max_length=100)
@@ -30,6 +33,7 @@ class Shoe(models.Model):
 
     # Manipulate (in this case, resizing image before saving)
     def makeThumbnail(self, size=(300, 300)):
+        # print("[SERVER] Making thumbnail ...")
         im = Image.open(self.thumbnail)
         im = im.convert('RGB')
 
@@ -43,7 +47,7 @@ class Shoe(models.Model):
     
     # Override save method
     def save(self, *args, **kwargs):
-        if "shoe-thumbnail/" in self.thumbnail:
+        if self.thumbnail:
             self.thumbnail = self.makeThumbnail()
 
         super().save(*args, **kwargs)
@@ -77,14 +81,61 @@ class Size(models.Model):
         return str(self.value)
 
 
-class ShoeItem(models.Model):
+class ProductPicture(models.Model):
     class Meta:
         unique_together = ['shoe', 'color']
     
     shoe = models.ForeignKey(Shoe, on_delete=models.CASCADE)
+    color = models.ForeignKey(Color, on_delete=models.CASCADE)
+    picture = models.ImageField(default="shoe-thumbnail/default.png", upload_to="shoes/", null=True, blank=True)
+
+    def __str__(self):
+        return f"Picture of {self.color} {self.shoe}"
+
+
+class ShoeItem(models.Model):
+    class Meta:
+        unique_together = ['shoe', 'color', 'size']
+    
+    shoe = models.ForeignKey(Shoe, on_delete=models.CASCADE)
     color = models.ForeignKey(Color, null=True, on_delete=models.SET_NULL)
-    size = models.ManyToManyField(Size)
+    size = models.ForeignKey(Size, null=True, on_delete=models.SET_NULL)
     quantity = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"{self.shoe}, color {self.color} has {self.quantity} left"
+        return f"{self.shoe}, color {self.color}, size {self.size} has {self.quantity} left"
+
+
+class Order(models.Model):
+    class Meta:
+        ordering = ['-dateCreated']
+
+    STATUS = (
+        ('pending', 'pending'),
+        ('delivering', 'delivering'),
+        ('delivered', 'delivered'),
+    )
+
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
+    address = models.TextField(blank=True)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    status = models.CharField(max_length=20, choices=STATUS)
+    totalPrice = models.PositiveIntegerField(default=0)
+    dateCreated = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order {self.id} on {self.dateCreated} by {self.user}"
+
+ 
+class PurchaseItem(models.Model):
+    class Meta:
+        unique_together = ['order', 'item']
+
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    item = models.ForeignKey(ShoeItem, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"Item from {self.order}"
