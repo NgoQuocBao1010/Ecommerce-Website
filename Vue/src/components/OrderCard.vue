@@ -1,13 +1,16 @@
 <template>
     <div class="order-wrapper">
         <div class="header">
-            <div class="code">#345645</div>
-            <div class="status delivered">Delivered</div>
+            <div class="code">#{{ order.id }}</div>
+            <div class="status delivered">{{ order.status }}</div>
         </div>
 
         <div class="orders">
             <div class="item" v-for="item in order.cart" :key="item.id">
-                <img :src="item.thumbnail" :alt="item.name" />
+                <img
+                    :src="`${order.domain}${item.thumbnail}`"
+                    :alt="item.name"
+                />
                 <p>
                     {{ item.name }}, {{ item.color }}, {{ item.size }},
                     <strong>X{{ item.quantity }}</strong>
@@ -17,7 +20,9 @@
 
         <div class="footer">
             <h4>Total Price</h4>
-            <h4 class="price">{{ order.price }}.000 VND</h4>
+            <h4 class="price">
+                {{ $filters.formatMoneyToVND(order.totalPrice) }}.000 VND
+            </h4>
         </div>
     </div>
 </template>

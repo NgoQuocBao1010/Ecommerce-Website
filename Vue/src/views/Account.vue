@@ -113,14 +113,14 @@
             </div>
         </div>
 
-        <div class="order-container" v-if="authenticated">
+        <div class="order-container" v-if="authenticated && orders">
             <h1 class="title">Your Orders, ({{ orders.length }} order)</h1>
             <div class="orders">
                 <p v-if="orders.length === 0">
                     No order yet!!
-                    <router-link :to="{ name: 'Product' }"
-                        >Go shopping now</router-link
-                    >
+                    <router-link :to="{ name: 'Product' }">
+                        Go shopping now
+                    </router-link>
                 </p>
                 <OrderCard
                     v-for="(order, index) in orders"
@@ -152,10 +152,12 @@ export default {
             phone: "",
             address: "",
             dateOfBirth: "",
+
+            orders: null,
         };
     },
     computed: {
-        ...mapState(["user", "authenticated", "orders"]),
+        ...mapState(["user", "authenticated"]),
     },
     watch: {
         nonEdit(newVal) {
@@ -163,6 +165,7 @@ export default {
         },
         user(newVal, oldVal) {
             if (newVal) {
+                this.getOrders();
                 ({
                     email: this.email,
                     fullName: this.fullName,
@@ -176,6 +179,17 @@ export default {
     },
     methods: {
         ...mapMutations(["logout", "getUserProfile"]),
+        getOrders() {
+            axios
+                .get("http://127.0.0.1:8000/my-orders/")
+                .then((response) => {
+                    console.log(response.data);
+                    this.orders = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
         toggleEdit() {
             if (this.nonEdit) this.nonEdit = false;
         },
@@ -203,6 +217,7 @@ export default {
     },
     mounted() {
         if (this.user) {
+            this.getOrders();
             ({
                 email: this.email,
                 fullName: this.fullName,

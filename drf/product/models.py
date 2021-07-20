@@ -119,6 +119,7 @@ class Order(models.Model):
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20)
     address = models.TextField(blank=True)
+    note = models.CharField(default="", max_length=255, blank=True, null=True)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     status = models.CharField(max_length=20, choices=STATUS)
     totalPrice = models.PositiveIntegerField(default=0)
@@ -133,7 +134,7 @@ class PurchaseItem(models.Model):
         unique_together = ['order', 'item']
 
 
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="cart")
     item = models.ForeignKey(ShoeItem, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 

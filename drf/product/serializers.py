@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models import *
 
 class ShoeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Shoe
         fields = '__all__'
@@ -25,22 +24,47 @@ class ShoeItemSerializer(serializers.ModelSerializer):
 
 
 class PurchaseItemSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    color = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
+
     class Meta:
         model = PurchaseItem
-        fields = '__all__'
+        exclude = ('order', 'item')
+    
+    def get_name(self, obj):
+        return obj.item.shoe.name
+    
+    def get_color(self, obj):
+        return obj.item.color.name
 
+    def get_size(self, obj):
+        return obj.item.size.value
+    
+    def get_thumbnail(self, obj):
+        shoe = obj.item.shoe
+        color = obj.item.color
+        thumbnail = ProductPicture.objects.get(shoe=shoe, color=color)
 
-class OrderSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=255, required=True)
-    phone = serializers.CharField(max_length=20, required=True)
-    address = serializers.CharField(max_length=255, required=True)
-    price = serializers.IntegerField()
-    cart = serializers.ListField()
+        return thumbnail.picture.url
+    
     
 
-    def validate_data(self, data):
-        pass
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    cart = PurchaseItemSerializer(read_only=True, many=True)
+    domain = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields =  '__all__'
     
-    def save(self, user=None, *args, **kwargs):
-        pass
+    def get_domain(self, obj):
+       request = self.context.get('request')
+       return request.build_absolute_uri('/')[:-1]
+    
+
         
