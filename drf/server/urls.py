@@ -3,7 +3,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-from account.views import loginApi, register, getProfile, updateProfile
+from account.views import (
+    loginApi, 
+    register, 
+    getProfile, 
+    updateProfile,
+    sendEmail,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,6 +21,7 @@ urlpatterns = [
     path('api/register', register, name='register'),
     path('api/profile', getProfile, name='profile'),
     path('api/update-profile', updateProfile, name='updateProfile'),
+    path('api/email', sendEmail, name='email'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
