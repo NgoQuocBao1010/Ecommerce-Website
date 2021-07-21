@@ -34,6 +34,13 @@
                     </div>
                 </div>
 
+                <div class="loading-animation" v-show="loadingAnimation">
+                    <div class="spinner">
+                        <div class="bubble-1"></div>
+                        <div class="bubble-2"></div>
+                    </div>
+                </div>
+
                 <div class="submit">
                     <button type="submit">Register</button>
                     <router-link :to="{ name: 'Login' }">
@@ -60,6 +67,8 @@ export default {
                 email: "",
                 password: "",
             },
+
+            loadingAnimation: false,
         };
     },
     methods: {
@@ -100,10 +109,12 @@ export default {
                 password: this.password1,
             };
 
+            this.loadingAnimation = true;
+
             axios
                 .post("http://127.0.0.1:8000/api/register", data)
                 .then((response) => {
-                    console.log(response);
+                    this.loadingAnimation = false;
                     this.$router.push({ name: "Login" });
 
                     createToast(`Your account is created`, {
@@ -116,6 +127,7 @@ export default {
                     });
                 })
                 .catch((error) => {
+                    this.loadingAnimation = false;
                     const data = error.response.data;
 
                     for (const key in data.errors) {
@@ -141,8 +153,6 @@ export default {
     .register-wrapper {
         width: 90%;
         max-width: 900px;
-        height: 60vh;
-        aspect-ratio: 7 / 4;
         padding: 3rem 0;
         box-shadow: rgb(248, 178, 205, 0.5) 0px 3px 8px;
 
@@ -216,7 +226,50 @@ export default {
                 }
             }
 
+            .loading-animation {
+                .spinner {
+                    position: relative;
+                    width: 45px;
+                    height: 45px;
+                    margin: 0 auto;
+                    animation: loadingI 2s linear infinite;
+
+                    .bubble-1,
+                    .bubble-2 {
+                        position: absolute;
+                        top: 0;
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 100%;
+                        background-color: var(--primary-color);
+                        animation: bounce 2s ease-in-out infinite;
+                    }
+                    .bubble-2 {
+                        top: auto;
+                        bottom: 0;
+                        animation-delay: -1s;
+                    }
+
+                    @keyframes loadingI {
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    @keyframes bounce {
+                        0%,
+                        100% {
+                            transform: scale(0);
+                        }
+                        50% {
+                            transform: scale(1);
+                        }
+                    }
+                }
+            }
+
             .submit {
+                margin: 2rem 0;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -261,10 +314,6 @@ export default {
     @media only screen and (min-width: 1140px) {
         .register-wrapper {
             display: flex;
-
-            // > * {
-            //     flex-basis: 50%;
-            // }
 
             .introduction {
                 display: flex;

@@ -110,6 +110,10 @@
                 >
                     Save
                 </button>
+
+                <p class="reminder" v-show="updateProfileReminder && nonEdit">
+                    **Update the info your account make your shoppping easier
+                </p>
             </div>
         </div>
 
@@ -136,6 +140,8 @@
 import axios from "axios";
 import { mapState, mapMutations } from "vuex";
 
+import { createToast } from "mosha-vue-toastify";
+
 import OrderCard from "../components/OrderCard.vue";
 
 export default {
@@ -158,6 +164,11 @@ export default {
     },
     computed: {
         ...mapState(["user", "authenticated"]),
+        updateProfileReminder() {
+            if (this.fullName || this.phone || this.address) return false;
+
+            return true;
+        },
     },
     watch: {
         nonEdit(newVal) {
@@ -183,7 +194,6 @@ export default {
             axios
                 .get("http://127.0.0.1:8000/my-orders/")
                 .then((response) => {
-                    console.log(response.data);
                     this.orders = response.data;
                 })
                 .catch((error) => {
@@ -191,6 +201,7 @@ export default {
                 });
         },
         toggleEdit() {
+            console.log(this.updateProfileReminder);
             if (this.nonEdit) this.nonEdit = false;
         },
         saveInfo() {
@@ -204,9 +215,19 @@ export default {
             };
 
             axios
-                .post("http://127.0.0.1:8000/api/update-profile", data)
+                .post("http://127.0.0.1:8000/api/profile", data)
                 .then((response) => {
-                    if (response.status === 200) this.getUserProfile(data);
+                    if (response.status === 200) {
+                        this.getUserProfile(data);
+                        createToast("Your profile is updated!", {
+                            type: "success",
+                            timeout: 3000,
+                            position: "bottom-right",
+                            transition: "bounce",
+                            hideProgressBar: true,
+                            showIcon: true,
+                        });
+                    }
                 })
                 .catch((error) => {
                     console.log(error);
@@ -317,7 +338,9 @@ export default {
 
                     input {
                         width: 100%;
-                        font-size: 1.8rem;
+                        font-size: 2rem;
+                        font-family: "Roboto", sans-serif;
+                        letter-spacing: 1px;
                         line-height: 2;
                         padding: 0.5rem;
                     }
@@ -377,7 +400,7 @@ export default {
                 }
             }
 
-            .save {
+            button.save {
                 padding: 1rem 4rem;
                 margin: 0 auto;
                 aspect-ratio: initial;
@@ -386,6 +409,10 @@ export default {
                 align-items: center;
                 border-radius: 10px;
                 font-size: 1.6rem;
+            }
+
+            .reminder {
+                text-align: center;
             }
         }
     }
@@ -420,7 +447,7 @@ export default {
                 }
             }
 
-            .save {
+            button.save {
                 border-radius: 20px !important;
                 border: 2px solid black;
                 background: #fff;
@@ -429,9 +456,17 @@ export default {
                 transition: all 0.2s ease;
             }
 
-            .save:hover {
+            button.save:hover {
                 color: var(--primary-color);
                 background: black;
+            }
+        }
+
+        .order-container {
+            .orders {
+                p {
+                    font-size: 1.5rem;
+                }
             }
         }
     }

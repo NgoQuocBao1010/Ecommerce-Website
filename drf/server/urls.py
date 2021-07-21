@@ -6,8 +6,7 @@ from django.conf.urls.static import static
 from account.views import (
     loginApi, 
     register, 
-    getProfile, 
-    updateProfile,
+    profile,
     sendEmail,
 )
 
@@ -19,8 +18,7 @@ urlpatterns = [
 
     path('api/login', loginApi, name='login'),
     path('api/register', register, name='register'),
-    path('api/profile', getProfile, name='profile'),
-    path('api/update-profile', updateProfile, name='updateProfile'),
+    path('api/profile', profile, name='profile'),
     path('api/email', sendEmail, name='email'),
 ]
 

@@ -8,10 +8,58 @@
         <style>
             body {
                 height: 100px;
+                background: black;
+            }
+            section {
+                width: 100%;
+                background: black;
+                padding: 2rem 0;
+            }
+            section * {
+                color: white;
+            }
+            .main {
+                margin: 0 auto;
+                width: 60%;
+            }
+            .title {
+                font-family: "Comfortaa", cursive;
+                font-size: 3rem;
+                font-weight: bold;
+                letter-spacing: 7px;
+                color: #f8b2cd;
+            }
+            .subject {
+                color: white;
+            }
+            p {
+                color: white;
+                font-size: 16px;
+            }
+            a {
+                color: black !important;
+                font-size: 1.2rem;
+                border-radius: 10px;
+                padding: 0.5rem 1rem;
+                margin: 1rem 0;
+                cursor: pointer;
+                background-color: #f8b2cd;
+                text-decoration: none;
             }
         </style>
     </head>
     <body>
-        <h1 style="background-color: blue">Welcome</h1>
+        <section>
+            <div class="main">
+                <h1 class="title">Footco</h1>
+                <h2 class="subject">Welcome to Footco store!</h2>
+                <p class="info">
+                    Your account is activated! Please loggin to your account the
+                    next time you shopping at our shop for better exprience and
+                    other special deals
+                </p>
+                <a href="#">Go to our shop</a>
+            </div>
+        </section>
     </body>
 </html>

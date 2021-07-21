@@ -16,6 +16,7 @@
                         <label for="email">Email</label>
                         <input
                             type="email"
+                            name="email"
                             v-model="email"
                             spellcheck="false"
                             required
@@ -26,6 +27,13 @@
                         <label for="password">Password</label>
                         <input type="password" v-model="password" required />
                         <p class="error">{{ error }}</p>
+                    </div>
+                </div>
+
+                <div class="loading-animation" v-show="loadingAnimation">
+                    <div class="spinner">
+                        <div class="bubble-1"></div>
+                        <div class="bubble-2"></div>
                     </div>
                 </div>
 
@@ -55,6 +63,8 @@ export default {
             email: "",
             password: "",
             error: "",
+
+            loadingAnimation: false,
         };
     },
     methods: {
@@ -65,13 +75,25 @@ export default {
                 password: this.password,
             };
 
+            // Start loading animation
+            this.loadingAnimation = true;
+
             axios
                 .post("http://127.0.0.1:8000/api/login", loginForm)
                 .then((response) => {
+                    // Get token from response
                     const token = response.data["auth_token"];
+
+                    // End loading animation
+                    this.loadingAnimation = false;
+
+                    // loggin in globaly by using vuex
                     this.logginIn(token);
+
+                    //  redirect to home page
                     this.$router.push({ name: "Home" });
 
+                    // Make an notification
                     createToast(`Welcome, ${this.email}`, {
                         type: "success",
                         timeout: 3000,
@@ -88,8 +110,10 @@ export default {
                 .catch((err) => {
                     console.log(err);
                     if (err.response.status === 401) {
-                        console.log(err.response.data.message);
                         this.error = err.response.data.message;
+
+                        // End loading animation
+                        this.loadingAnimation = false;
                     }
                 });
         },
@@ -182,6 +206,48 @@ export default {
                     .error {
                         color: red;
                         font-size: 1.2rem;
+                    }
+                }
+            }
+
+            .loading-animation {
+                .spinner {
+                    position: relative;
+                    width: 45px;
+                    height: 45px;
+                    margin: 0 auto;
+                    animation: loadingI 2s linear infinite;
+
+                    .bubble-1,
+                    .bubble-2 {
+                        position: absolute;
+                        top: 0;
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 100%;
+                        background-color: var(--primary-color);
+                        animation: bounce 2s ease-in-out infinite;
+                    }
+                    .bubble-2 {
+                        top: auto;
+                        bottom: 0;
+                        animation-delay: -1s;
+                    }
+
+                    @keyframes loadingI {
+                        100% {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    @keyframes bounce {
+                        0%,
+                        100% {
+                            transform: scale(0);
+                        }
+                        50% {
+                            transform: scale(1);
+                        }
                     }
                 }
             }

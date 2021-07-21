@@ -84,7 +84,7 @@ export default {
         gap: 20px;
 
         img {
-            width: 50%;
+            width: 30%;
             aspect-ratio: 1 / 1;
         }
 
@@ -100,7 +100,7 @@ export default {
         padding: 1rem 0;
 
         h4 {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
         }
     }
 
@@ -117,6 +117,12 @@ export default {
 
         .item {
             p {
+                font-size: 1.8rem;
+            }
+        }
+
+        .footer {
+            h4 {
                 font-size: 1.8rem;
             }
         }
