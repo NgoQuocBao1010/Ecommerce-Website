@@ -3,7 +3,7 @@ from product.models import Brand, Shoe, ShoeItem, Color, Size, ProductPicture
 
 import os, random
 
-
+# Generate random size, price and quantity
 def randomGenerator(type=None):
     return {
         "size": random.sample(range(38, 45), random.randint(2, 6)),
@@ -12,6 +12,7 @@ def randomGenerator(type=None):
     }.get(type)
 
 
+#  =======================  Get or Create object in database    ======================= #
 def getBrand(brandName):
     brand = Brand.objects.filter(name__iexact=brandName)
 
@@ -30,7 +31,6 @@ def getColor(name):
     newColor = Color.objects.create(name=name)
     return newColor
 
-
 def getSize(value):
     size = Size.objects.filter(value__iexact=value)
 
@@ -39,7 +39,6 @@ def getSize(value):
     
     newSize = Size.objects.create(value=value)
     return newSize
-
 
 def getShoe(name, brand, price, imgUrl):
     shoe = Shoe.objects.filter(name__iexact=name)
@@ -56,21 +55,12 @@ def getShoe(name, brand, price, imgUrl):
     newShoe.thumbnail.save(f'{name}{fileExtension}', File(open(imgUrl, 'rb')))
     return newShoe
 
-
-
-
-def test():
-    # try: 
-    #     # getShoe("test", 2000, "F:\Project\Ecommerce Website\shoe_images\Adidas\\4D Fusio\\black.jpg")
-    #     print(getShoe("test", 2000, "F:\Project\Ecommerce Website\shoe_images\Adidas\\4D Fusio\\black.jpg"))
-    # except Exception as e:
-    #     print(str(e))
-    
-    pass
+#  =======================  ***    ======================= #
 
 
 
 def processing():
+    # Get all shoes in image
     url = "F:\Project\Ecommerce Website\shoe_images"
 
     for brandUrl in os.listdir(url):
@@ -120,4 +110,3 @@ def processing():
 
 def run():
     processing()
-    # test()

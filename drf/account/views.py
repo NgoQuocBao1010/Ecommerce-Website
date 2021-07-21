@@ -1,11 +1,6 @@
 from django.contrib.auth import get_user_model, authenticate, login
 from django.http import JsonResponse
 
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -77,20 +72,3 @@ def profile(request):
     
     else:
         return JsonResponse(status=status.HTTP_401_UNAUTHORIZED, data={'message': "You are not authorized to view this profile"})
-    
-
-@api_view(['GET'])
-def sendEmail(request):
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = ["baoB1809677@student.ctu.edu.vn", "fadsfasdfasdf@gmail.com", ]
-
-    message = render_to_string('welcome.html', {})
-    text_content = strip_tags(message)
-
-    subject = "Footco - Confirm account"
-
-    msg = EmailMultiAlternatives(subject, text_content, email_from, to=recipient_list)
-    msg.attach_alternative(message, "text/html")
-    msg.send()
-
-    return JsonResponse(status=status.HTTP_200_OK, data={'message': "email is sent"})

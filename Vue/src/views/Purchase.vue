@@ -182,7 +182,7 @@ export default {
                     createToast(
                         "There are some problems! Please try again later!",
                         {
-                            type: "error",
+                            type: "danger",
                             timeout: 3000,
                             position: "bottom-right",
                             transition: "bounce",

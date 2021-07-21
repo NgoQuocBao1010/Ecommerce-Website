@@ -28,6 +28,7 @@ class PurchaseItemSerializer(serializers.ModelSerializer):
     color = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
 
     class Meta:
@@ -42,6 +43,9 @@ class PurchaseItemSerializer(serializers.ModelSerializer):
 
     def get_size(self, obj):
         return obj.item.size.value
+
+    def get_price(self, obj):
+        return obj.item.shoe.price
     
     def get_thumbnail(self, obj):
         shoe = obj.item.shoe
@@ -50,12 +54,10 @@ class PurchaseItemSerializer(serializers.ModelSerializer):
 
         return thumbnail.picture.url
     
-    
-
-
 
 class OrderSerializer(serializers.ModelSerializer):
     cart = PurchaseItemSerializer(read_only=True, many=True)
+    dateCreated = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
     domain = serializers.SerializerMethodField()
 
     class Meta:

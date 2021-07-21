@@ -423,7 +423,7 @@ export default {
         .orders {
             outline: 1px solid rgb(0, 0, 0, 0.4);
             margin: 2rem auto;
-            padding: 1rem 4rem;
+            padding: 1rem;
 
             p {
                 text-align: center;

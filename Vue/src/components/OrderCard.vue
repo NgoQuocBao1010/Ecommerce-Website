@@ -1,8 +1,11 @@
 <template>
     <div class="order-wrapper">
         <div class="header">
-            <div class="code">#{{ order.id }}</div>
-            <div class="status delivered">{{ order.status }}</div>
+            <div class="code">
+                #{{ order.id }}
+                <span class="date">{{ order.dateCreated }}</span>
+            </div>
+            <div class="status" :class="order.status">{{ order.status }}</div>
         </div>
 
         <div class="orders">
@@ -11,10 +14,15 @@
                     :src="`${order.domain}${item.thumbnail}`"
                     :alt="item.name"
                 />
-                <p>
-                    {{ item.name }}, {{ item.color }}, {{ item.size }},
-                    <strong>X{{ item.quantity }}</strong>
-                </p>
+                <div class="info">
+                    <p class="name">{{ item.name }}</p>
+                    <p>Color: {{ item.color }}</p>
+                    <p>Size: {{ item.size }}</p>
+                    <p>
+                        Quantity: {{ item.quantity }} X
+                        {{ $filters.formatMoneyToVND(item.price) }}.000 VND
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -38,17 +46,19 @@ export default {
     props: {
         order: Object,
     },
+    created() {
+        console.log(this.order);
+    },
 };
 </script>
 
 <style lang="scss" scoped>
 .order-wrapper {
-    width: 100%;
-    max-width: 800px;
-    border: 1px solid black;
+    width: 90%;
     border-radius: 8px;
-    padding: 0.5rem 1rem;
-    margin: 1rem auto;
+    padding: 2rem;
+    margin: 3rem auto;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 
     .header {
         display: flex;
@@ -62,6 +72,13 @@ export default {
             color: var(--primary-color);
         }
 
+        .date {
+            color: grey;
+            font-weight: 500;
+            font-size: 1rem;
+            padding-left: 1rem;
+        }
+
         .status {
             padding: 0.2rem 1rem;
             display: flex;
@@ -70,9 +87,19 @@ export default {
             border-radius: 1000px;
         }
 
-        .delivered {
+        .pending {
+            color: white;
+            background: orange;
+        }
+
+        .delivering {
             color: black;
             background: lightgreen;
+        }
+
+        .delivered {
+            color: white;
+            background: grey;
         }
     }
 
@@ -88,9 +115,13 @@ export default {
             aspect-ratio: 1 / 1;
         }
 
-        p {
-            font-size: 1.2rem;
-            text-align: center;
+        .info {
+            p {
+                text-transform: capitalize;
+                &.name {
+                    font-weight: bold;
+                }
+            }
         }
     }
 
@@ -104,10 +135,14 @@ export default {
         }
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (min-width: 768px) {
         .header {
             .code {
                 font-size: 2rem;
+            }
+
+            .date {
+                font-size: 1.8rem;
             }
 
             .status {
@@ -116,8 +151,14 @@ export default {
         }
 
         .item {
-            p {
-                font-size: 1.8rem;
+            .info {
+                p {
+                    font-size: 2rem;
+                    padding: 1rem;
+                    &.name {
+                        font-weight: bold;
+                    }
+                }
             }
         }
 

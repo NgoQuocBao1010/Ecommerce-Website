@@ -1,21 +1,22 @@
-from django.db.models.signals import pre_save
-import os
-from .models import Shoe
+from django.db.models.signals import post_save
+from .models import Order
 
-# def removeOldImage(sender, instance, **kwargs):
-#     if Shoe.objects.filter(id=instance.id).exists():
-#         try:
-#             oldImg = Shoe.objects.get(id=instance.id).thumbnail.path
-#             newImg = instance.thumbnail.path
+# from django.conf import settings
+# from django.core.mail import EmailMultiAlternatives
+# from django.template.loader import render_to_string
+# from django.utils.html import strip_tags
 
-#             print(oldImg, newImg)
+# def orderSuccessEmail(sender, instance=None, created=False, **kwargs):
+#     if created and instance.user:
+#         adminEmail = settings.EMAIL_HOST_USER
+#         userEmail = instance.user.email
 
-#             if newImg != oldImg and "default" not in os.path.basename(oldImg):
-#                 if os.path.exists(oldImg):
-#                     os.remove(oldImg)
-#                     # print(f"[SERVER]: Image removed successfully\n")
-                    
-#         except Exception as e:
-#             print(f"[SERVER]: Error on removing old image: {e}\n")
+#         htmlContent = render_to_string('newOrder.html', {"order": instance})
+#         textContent = strip_tags(htmlContent)
 
-# pre_save.connect(removeOldImage, sender=Shoe)
+#         subject = "Footco - Order Successfully"
+#         msg = EmailMultiAlternatives(subject, textContent, adminEmail, to=[userEmail, ])
+#         msg.attach_alternative(htmlContent, "text/html")
+#         msg.send()
+
+# post_save.connect(orderSuccessEmail, sender=Order)

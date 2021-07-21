@@ -1,7 +1,1 @@
-Admin account:
-    email: totti.chelsea@gmail.com
-    password: baobao123
-
-
-
 Every other accounts password: hgfTTGBG12344556

@@ -8,53 +8,6 @@ export default createStore({
         token: null,
         authenticated: false,
         cart: [],
-        orders: [
-            {
-                address: "đường B19, KDC Hưng Phú 1, Cái Răng",
-                name: "Ngô Hồng Quốc Bảo",
-                note: "",
-                phone: "0939983979",
-                cart: [
-                    {
-                        id: "1-35-orange",
-                        productId: 1,
-                        name: "Adizero Boston 10",
-                        thumbnail: require("../assets/shoes/shoes-1.jpg"),
-                        size: 35,
-                        color: "orange",
-                        quantity: 1,
-                    },
-                    {
-                        id: "7-35-white",
-                        productId: 7,
-                        name: "Fear of Gods",
-                        thumbnail: require("../assets/shoes/converse-3.jpg"),
-                        size: 35,
-                        color: "white",
-                        quantity: 3,
-                    },
-                ],
-                price: 5400,
-            },
-            {
-                address: "đường B19, KDC Hưng Phú 1, Cái Răng",
-                name: "Ngô Hồng Quốc Bảo",
-                note: "",
-                phone: "0939983979",
-                cart: [
-                    {
-                        id: "1-35-orange",
-                        productId: 1,
-                        name: "Adizero Boston 10",
-                        thumbnail: require("../assets/shoes/shoes-1.jpg"),
-                        size: 35,
-                        color: "orange",
-                        quantity: 1,
-                    },
-                ],
-                price: 1400,
-            },
-        ],
     },
     mutations: {
         authenticate(state, token) {
@@ -96,7 +49,7 @@ export default createStore({
         },
         clearCart(state) {
             state.cart = [];
-            localStorage.clear();
+            localStorage.setItem("cart", JSON.stringify(state.cart));
         },
     },
     getters: {

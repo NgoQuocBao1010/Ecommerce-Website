@@ -191,6 +191,8 @@ export default {
                     });
 
                     this.colors = [...new Set(this.colors)];
+
+                    this.sizes.sort();
                     this.sizes = [...new Set(this.sizes)];
 
                     this.exist = true;

@@ -7,7 +7,6 @@ from account.views import (
     loginApi, 
     register, 
     profile,
-    sendEmail,
 )
 
 urlpatterns = [
@@ -19,7 +18,6 @@ urlpatterns = [
     path('api/login', loginApi, name='login'),
     path('api/register', register, name='register'),
     path('api/profile', profile, name='profile'),
-    path('api/email', sendEmail, name='email'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
